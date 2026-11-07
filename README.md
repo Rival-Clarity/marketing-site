@@ -1,42 +1,31 @@
 # Rival Clarity marketing site
 
-The marketing website and interactive product mockups for Rival Clarity, competitive intelligence for founders and small businesses.
+Public marketing website for Rival Clarity, competitor intelligence for founders and small businesses.
 
-**Website:** https://rival-clarity.github.io/marketing-site/
+**Website:** https://rivalclarity.com/
 
-## Current status
+## Current experience
 
-This is a design prototype. All example companies, account details, findings, and evidence are fictional. Features and the proposed Free Brief and $19/month Founder plans are concepts for review.
+The homepage describes deployed company research, competitor discovery, pricing/product/messaging monitoring, SEO and Google Ads comparisons, reviews and source ratings, recent X posts, public technology references, saved findings, and the in-app weekly brief. Illustrative companies and evidence are explicitly fictional.
 
-Signup, payments, email delivery, and competitor monitoring are demonstrations only. Form entries stay in the browser tab; no accounts are created, no websites are fetched, and no emails are sent. Demo watchlists and saved findings reset on reload.
+All acquisition calls to action are ordinary links to **https://app.rivalclarity.com/signup**, with existing-account links to **https://app.rivalclarity.com/login**. They work without JavaScript. Account data is collected once in the real Clerk signup flow; no marketing form pretends to save a lead or start monitoring. Account completion requires the visitor to authenticate and verify as directed by Clerk.
 
-## Site structure
+The unlaunched $19 plan and mock signup forms have been removed. The original demo entry at `docs/demo/index.html` directs visitors to current features or real account creation. The old demo scripts remain archived in the repository but are not loaded or linked by the public experience.
 
-- `docs/index.html`, `docs/site.css`, `docs/site.js`: the marketing homepage, interactive feature examples, sample brief, pricing, FAQs, and signup concept.
-- `docs/privacy.html`, `docs/terms.html`, `docs/legal.css`: public legal pages covering the website, demos, and separate application; linked from the homepage footer and demo signup dialog. Contact: `legal@rivalclarity.com`.
-- `docs/demo/`: interactive product mockups with a competitor feed, evidence views, saved findings, watchlist management, email preferences, and sample brief.
-- `docs/.nojekyll`: serves these files directly as a static website.
+The November 6 source review found the guided overview, multi-company comparison matrix, private finding review controls, cross-channel brief, and optional weekly email merged at app commit `151a632` but not live. These are clearly marked **Coming next**. Recheck the live application before removing that label.
 
-The product demo is linked from the marketing site and is hosted in the same repository. No private preview links, credentials, or hosting-provider configuration are required.
+## Files
 
-## Preview locally
+- `docs/index.html`, `docs/site.css`, `docs/site.js`: homepage, feature examples, sample brief, FAQs, and live signup links.
+- `docs/privacy.html`, `docs/terms.html`, `docs/legal.css`: public policies, last updated November 6, 2026. Contact: legal@rivalclarity.com.
+- `docs/demo/index.html`: current destination for old demo URLs.
+- `docs/CNAME`: rivalclarity.com.
+- `docs/.nojekyll`: serve the static files directly.
 
-From the repository root:
+## Preview and publish
 
-```sh
-python3 -m http.server 4174 --bind 127.0.0.1 --directory docs
-```
+Run `python3 -m http.server 4174 --bind 127.0.0.1 --directory docs` from the repository root, then open http://127.0.0.1:4174.
 
-Open http://127.0.0.1:4174. The product demo is at http://127.0.0.1:4174/demo/#workspace.
+GitHub Pages publishes `main:/docs`. Pushing to main updates the existing website. Relative assets support the GitHub Pages project path as well as the custom domain. This repository does not use Sites hosting; preserve GitHub Pages and the configured domain.
 
-## Publish with GitHub Pages
-
-The repository is public. Pages publishes from the `docs` folder on `main` using **Deploy from a branch**. Pushing changes to that folder on `main` automatically updates the website. No custom build, package installation, or deployment credentials are needed.
-
-All asset and product-demo links are relative, so the site works beneath the `/marketing-site/` project path. A custom domain can be configured later in the repository's Pages settings.
-
-Google Fonts is optional; local fallback fonts are provided. There are no analytics or application integrations in this prototype.
-
-## Legal pages
-
-The Privacy Policy and Terms of Service are effective November 5, 2026. The privacy disclosures distinguish browser-local marketing demos from the separate application at `app.rivalclarity.com`, and describe its current account, monitoring, AI, provider, cookie, and retention behavior. Pricing examples remain proposals. Update these pages when collection practices, providers, retention, or paid-service terms change.
+Google Fonts supplies Manrope and Inter, with local fallbacks. No analytics or advertising pixels are installed. Conversion effects of the old demo have not been measured; retiring its prominent links is a product judgment, not an established conversion result.
