@@ -14,6 +14,10 @@ The unlaunched $19 plan and mock signup forms have been removed. The original de
 
 The November 6 source review found the guided overview, multi-company comparison matrix, private finding review controls, cross-channel brief, and optional weekly email merged at app commit `151a632` but not live. These are clearly marked **Coming next**. Recheck the live application before removing that label.
 
+## Automatic insight illustration
+
+The hero includes an animated, fictional example of watched-page signals becoming a source-backed finding. Pricing, product, and messaging examples cycle through Observe → Connect → Insight. Visitors can pause playback, choose an example with mouse or keyboard (which pauses playback), and inspect its matching sample evidence. The animation pauses outside the viewport and in background tabs, and shows a static insight for visitors who prefer reduced motion. Without JavaScript, the initial pricing example remains readable. The illustration does not run real checks or send requests to data providers.
+
 ## Files
 
 - `docs/index.html`, `docs/site.css`, `docs/site.js`: homepage, feature examples, sample brief, FAQs, and live signup links.

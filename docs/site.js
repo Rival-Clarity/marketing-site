@@ -22,3 +22,133 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{if(modalRoot.firstChild){if(e.key==='Escape')closeModal();if(e.key==='Tab'){const controls=[...modalRoot.querySelectorAll('button,a[href],input')].filter(el=>!el.disabled);const first=controls[0],last=controls[controls.length-1];if(e.shiftKey&&(document.activeElement===first||document.activeElement.classList.contains('modal'))){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}else if(e.target.matches('[data-tab]')){const keys=Object.keys(features),index=keys.indexOf(e.target.dataset.tab);let next;if(e.key==='ArrowDown'||e.key==='ArrowRight')next=(index+1)%keys.length;if(e.key==='ArrowUp'||e.key==='ArrowLeft')next=(index-1+keys.length)%keys.length;if(e.key==='Home')next=0;if(e.key==='End')next=keys.length-1;if(next!==undefined){e.preventDefault();renderFeature(keys[next]);document.querySelector(`[data-tab="${keys[next]}"]`).focus()}}});
 renderFeature('pricing');
+
+// This sequence is illustrative; it does not request data or start a real check.
+function initInsightDemo() {
+ const demo = document.querySelector('[data-insight-demo]');
+ if (!demo) return;
+ const keys = Object.keys(features);
+ const examples = {
+  pricing: { source: 'Pricing page', detail: 'New price detected' },
+  product: { source: 'Product changelog', detail: 'New launch detected' },
+  messaging: { source: 'Homepage', detail: 'New message detected' }
+ };
+ const phases = ['observe', 'connect', 'insight'];
+ const durations = [1800, 1800, 6000];
+ const engineLabels = ['Watching for changes…', 'Connecting the dots…', 'Dots connected.'];
+ const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+ const toggle = demo.querySelector('[data-demo-toggle]');
+ const tabs = [...demo.querySelectorAll('[data-demo-example]')];
+ let current = 0;
+ let phase = 0;
+ let timer;
+ let paused = false;
+ let visible = false;
+ let reading = false;
+ const write = (selector, value) => { demo.querySelector(selector).textContent = value; };
+ function renderExample() {
+  const key = keys[current];
+  const feature = features[key];
+  tabs.forEach(tab => {
+   const selected = tab.dataset.demoExample === key;
+   tab.setAttribute('aria-selected', String(selected));
+   tab.tabIndex = selected ? 0 : -1;
+  });
+  demo.querySelector('#demo-result').setAttribute('aria-labelledby', 'demo-tab-' + key);
+  write('[data-demo-source]', examples[key].source);
+  write('[data-demo-detail]', examples[key].detail);
+  demo.querySelector('[data-demo-icon]').setAttribute('href', { pricing: '#i-price', product: '#i-grid', messaging: '#i-message' }[key]);
+  write('[data-demo-category]', feature.category.toUpperCase());
+  write('[data-demo-title]', feature.title);
+  write('[data-demo-observation]', feature.description);
+  write('[data-demo-meaning]', feature.meaning);
+  write('[data-demo-counter]', String(current + 1).padStart(2, '0') + ' / 03');
+  demo.querySelector('.demo-evidence').dataset.feature = key;
+ }
+ function renderPhase() {
+  demo.dataset.phase = phases[phase];
+  write('[data-demo-engine]', engineLabels[phase]);
+  write('[data-demo-status]', ['OBSERVING SOURCES', 'CONNECTING THE DOTS', 'INSIGHT FOUND'][phase]);
+ }
+ function sync() {
+  window.clearTimeout(timer);
+  const running = !paused && !motion.matches && visible && !document.hidden && !reading;
+  demo.dataset.running = String(running);
+  toggle.hidden = motion.matches;
+  toggle.setAttribute('aria-pressed', String(paused));
+  toggle.setAttribute('aria-label', paused ? 'Play animation' : 'Pause animation');
+  if (!running) return;
+  timer = window.setTimeout(() => {
+   phase = (phase + 1) % phases.length;
+   if (phase === 0) {
+    current = (current + 1) % keys.length;
+    renderExample();
+   }
+   renderPhase();
+   sync();
+  }, durations[phase]);
+ }
+ function choose(key) {
+  current = keys.indexOf(key);
+  phase = 2;
+  paused = true;
+  renderExample();
+  renderPhase();
+  sync();
+ }
+ demo.querySelector('.demo-options').hidden = false;
+ demo.addEventListener('click', event => {
+  const tab = event.target.closest('[data-demo-example]');
+  if (tab) choose(tab.dataset.demoExample);
+  if (event.target.closest('[data-demo-toggle]')) {
+   paused = !paused;
+   sync();
+  }
+  if (event.target.closest('.demo-evidence')) {
+   paused = true;
+   sync();
+  }
+ });
+ demo.addEventListener('keydown', event => {
+  const tab = event.target.closest('[data-demo-example]');
+  if (!tab) return;
+  const index = keys.indexOf(tab.dataset.demoExample);
+  let next;
+  if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (index + 1) % keys.length;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (index - 1 + keys.length) % keys.length;
+  if (event.key === 'Home') next = 0;
+  if (event.key === 'End') next = keys.length - 1;
+  if (next !== undefined) {
+   event.preventDefault();
+   choose(keys[next]);
+   tabs[next].focus();
+  }
+ });
+ demo.addEventListener('focusin', event => {
+  reading = Boolean(event.target.closest('.demo-result, .demo-options'));
+  sync();
+ });
+ demo.addEventListener('focusout', event => {
+  reading = Boolean(event.relatedTarget instanceof Element && event.relatedTarget.closest('.demo-result, .demo-options'));
+  sync();
+ });
+ document.addEventListener('visibilitychange', sync);
+ motion.addEventListener('change', () => {
+  if (motion.matches) phase = 2;
+  renderPhase();
+  sync();
+ });
+ if ('IntersectionObserver' in window) {
+  new IntersectionObserver(entries => {
+   visible = entries[0].isIntersecting;
+   sync();
+  }, { threshold: 0.15 }).observe(demo);
+ } else {
+  visible = true;
+ }
+ if (motion.matches) phase = 2;
+ renderExample();
+ renderPhase();
+ sync();
+}
+initInsightDemo();
